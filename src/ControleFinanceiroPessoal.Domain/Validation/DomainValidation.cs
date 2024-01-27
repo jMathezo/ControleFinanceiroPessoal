@@ -4,6 +4,8 @@ namespace ControleFinanceiroPessoal.Domain.Validation;
 
 public class DomainValidation
 {
+    protected DomainValidation() { }
+
     public static void NotNull(object? target, string fieldName)
     {
         if (target is null)
@@ -14,12 +16,6 @@ public class DomainValidation
     {
         if (String.IsNullOrWhiteSpace(target))
             throw new EntityValidationException($"{fieldName} não deve ser vazio ou nulo");
-    }
-
-    public static void NotEmpty(Guid? target, string fieldName)
-    {
-        if (target == Guid.Empty)
-            throw new EntityValidationException($"{fieldName} não deve ser vazio");
     }
 
     public static void MinLength(string target, int minLength, string fieldName)

@@ -65,7 +65,7 @@ public class CategoriaTest
         categoria.Nome.Should().Be(dataValidar.Nome);
         categoria.Descricao.Should().Be(dataValidar.Descricao);
         categoria.Id.Should().NotBeEmpty();
-        categoria.CriadoEm.Should().NotBeSameDateAs(default(DateTime));
+        categoria.CriadoEm.Should().NotBeSameDateAs(default);
         (categoria.CriadoEm > dateTimeAntes).Should().BeTrue();
         (categoria.CriadoEm < dateTimeDepois).Should().BeTrue();
         categoria.EstaAtivo.Should().Be(estaAtivo);
@@ -98,7 +98,7 @@ public class CategoriaTest
 
         void action() => new Dominio.Categoria(
                                         _categoriaTestFixture.ObterNomeValidoDeCategoria(),
-                                        null);
+                                        null!);
 
         // Act
         var exception = Assert.Throws<EntityValidationException>(action);
@@ -238,14 +238,14 @@ public class CategoriaTest
     [InlineData("")]
     [InlineData(null)]
     [InlineData("    ")]
-    public void Erro_Ao_Atualizar_Nome_Vazio_Ou_Nulo(string? name)
+    public void Erro_Ao_Atualizar_Nome_Vazio_Ou_Nulo(string? nome)
     {
         // Arrange
         var categoria = _categoriaTestFixture.ObterCategoriaValida;
 
         // Act
         Action action =
-           () => categoria.Update(name!);
+           () => categoria.Update(nome!);
 
         // Assert
         action.Should().Throw<EntityValidationException>()
@@ -296,7 +296,9 @@ public class CategoriaTest
 
         // Act
         Action action =
-            () => categoria.Update("Valid new Name", invalidDescription!);
+            () => categoria.Update(
+                        _categoriaTestFixture.ObterNomeValidoDeCategoria(), 
+                        invalidDescription!);
 
         // Assert
         action.Should().Throw<EntityValidationException>()
@@ -314,8 +316,7 @@ public class CategoriaTest
         var categoria = _categoriaTestFixture.ObterCategoriaValida;
         var subCategoria = new Dominio.SubCategoria(
             "Nome subcategoria", 
-            "Descrição subcategoria", 
-            categoria.Id);
+            "Descrição subcategoria");
 
         // Act
         categoria.AdicionarSubcategoria(subCategoria);

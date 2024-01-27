@@ -1,5 +1,4 @@
 ﻿using ControleFinanceiroPessoal.Domain.Exceptions;
-using ControleFinanceiroPessoal.UnitTests.Domain.Entity.Categoria;
 using FluentAssertions;
 using Xunit;
 
@@ -26,15 +25,14 @@ public class SubCategoriaTest
 
         // Act
         var dateTimeAntes = DateTime.Now;
-        var subCategoria  = new Dominio.SubCategoria(
+        var subCategoria = new Dominio.SubCategoria(
                                             dataValidar.Nome,
-                                            dataValidar.Descricao,
-                                            dataValidar.CategoriaId);
+                                            dataValidar.Descricao);
 
         var dateTimeDepois = DateTime.Now;
 
         // Assert
-        Assert.NotNull(subCategoria );
+        Assert.NotNull(subCategoria);
         Assert.True(subCategoria.Nome?.Equals(dataValidar.Nome));
         Assert.True(subCategoria.Descricao?.Equals(dataValidar.Descricao));
         Assert.NotEqual(Guid.Empty, subCategoria.Id);
@@ -54,9 +52,8 @@ public class SubCategoriaTest
         // Arrange
         Action action =
             () => new Dominio.SubCategoria(
-                                  nome!, 
-                                  "Descrição de subCategoria",
-                                  Guid.NewGuid());
+                                  nome!,
+                                  _subCategoriaTestFixture.ObterDescricaoValidaDeSubCategoria());
 
         // Act
         var exception = Assert.Throws<EntityValidationException>(action);
@@ -74,10 +71,9 @@ public class SubCategoriaTest
         // Act
         Action action =
             () => new Dominio.SubCategoria(
-                                  "Nome subCategoria",
-                                  null,
-                                  Guid.NewGuid());
-        
+                                  _subCategoriaTestFixture.ObterNomeValidoDeSubCategoria(),
+                                  null!);
+
         // Assert
         action.Should().Throw<EntityValidationException>()
             .WithMessage("Descricao não deve ser nulo");
@@ -93,9 +89,8 @@ public class SubCategoriaTest
         // Act
         Action action =
             () => new Dominio.SubCategoria(
-                                    nomeInvalido, 
-                                    "Categoria com descrição OK"!, 
-                                    Guid.NewGuid());
+                                    nomeInvalido,
+                                    _subCategoriaTestFixture.ObterDescricaoValidaDeSubCategoria());
 
         // Assert
         action.Should().Throw<EntityValidationException>()
@@ -112,9 +107,8 @@ public class SubCategoriaTest
         // Act
         Action action =
             () => new Dominio.SubCategoria(
-                                    nomeInvalido, 
-                                    "Categoria com descrição OK", 
-                                    Guid.NewGuid());
+                                    nomeInvalido,
+                                    _subCategoriaTestFixture.ObterDescricaoValidaDeSubCategoria());
 
         // Assert
         action.Should().Throw<EntityValidationException>()
@@ -131,32 +125,12 @@ public class SubCategoriaTest
         // Act
         Action action =
             () => new Dominio.SubCategoria(
-                                "Nome Categoria OK", 
-                                descricaoInvalida, 
-                                Guid.NewGuid());
+                                _subCategoriaTestFixture.ObterNomeValidoDeSubCategoria(),
+                                descricaoInvalida);
 
         // Assert
         action.Should().Throw<EntityValidationException>()
            .WithMessage("Descricao deve ter no máximo 255 caracteres");
-    }
-
-    [Fact(DisplayName = nameof(Erro_Instanciar_CategoriaId_Vazio))]
-    [Trait("Domain", "SubCategoria")]
-    public void Erro_Instanciar_CategoriaId_Vazio()
-    {
-        //Arrange
-        var descricaoInvalida = _subCategoriaTestFixture.Faker.Lorem.Letter(256);
-
-        // Act
-        Action action =
-            () => new Dominio.SubCategoria(
-                                "Nome Categoria OK",
-                                descricaoInvalida,
-                                Guid.Empty);
-
-        // Assert
-        action.Should().Throw<EntityValidationException>()
-           .WithMessage("CategoriaId não deve ser vazio");
     }
 
     #endregion
@@ -190,6 +164,116 @@ public class SubCategoriaTest
 
         // Assert
         subCategoria.EstaAtivo.Should().BeFalse();
+    }
+
+    #endregion
+
+    #region .: Atualizar :.
+
+    [Fact(DisplayName = nameof(Atualizar))]
+    [Trait("Domain", "Categoria - Aggregates")]
+    public void Atualizar()
+    {
+        // Arrange
+        var subCategoria = _subCategoriaTestFixture.ObterSubCategoriaValida;
+        var subCategoriaAtualizada = _subCategoriaTestFixture.ObterSubCategoriaValida;
+
+        // Act
+        subCategoria.Update(
+            subCategoriaAtualizada.Nome,
+            subCategoriaAtualizada.Descricao);
+
+        // Assert
+        subCategoria.Nome.Should().Be(subCategoriaAtualizada.Nome);
+        subCategoria.Descricao.Should().Be(subCategoriaAtualizada.Descricao);
+    }
+
+    [Fact(DisplayName = nameof(AtualizarNome))]
+    [Trait("Domain", "Categoria - Aggregates")]
+    public void AtualizarNome()
+    {
+        // Arrange
+        var subCategoria = _subCategoriaTestFixture.ObterSubCategoriaValida;
+        var novoNome = _subCategoriaTestFixture.ObterNomeValidoDeSubCategoria();
+        var descricaoAtual = subCategoria.Descricao;
+
+        // Act
+        subCategoria.Update(novoNome);
+
+        // Assert
+        subCategoria.Nome.Should().Be(novoNome);
+        subCategoria.Descricao.Should().Be(descricaoAtual);
+    }
+
+    [Theory(DisplayName = nameof(Erro_Ao_Atualizar_Nome_Vazio_Ou_Nulo))]
+    [Trait("Domain", "Categoria - Aggregates")]
+    [InlineData("")]
+    [InlineData(null)]
+    [InlineData("    ")]
+    public void Erro_Ao_Atualizar_Nome_Vazio_Ou_Nulo(string? nome)
+    {
+        // Arrange
+        var subCategoria = _subCategoriaTestFixture.ObterSubCategoriaValida;
+
+        // Act
+        Action action =
+           () => subCategoria.Update(nome!);
+
+        // Assert
+        action.Should().Throw<EntityValidationException>()
+           .WithMessage("Nome não deve ser vazio ou nulo");
+    }
+
+    [Theory(DisplayName = nameof(Erro_Ao_Atualizar_Nome_Menos_De_3_Caracteres))]
+    [Trait("Domain", "Categoria - Aggregates")]
+    [MemberData(nameof(ObterNomeInvalido), parameters: 10)]
+    public void Erro_Ao_Atualizar_Nome_Menos_De_3_Caracteres(string nomeInvalido)
+    {
+        // Arrange
+        var subCategoria = _subCategoriaTestFixture.ObterSubCategoriaValida;
+
+        // Act
+        Action action =
+           () => subCategoria.Update(nomeInvalido!);
+
+        // Assert
+        action.Should().Throw<EntityValidationException>()
+          .WithMessage("Nome deve ter no mínimo 3 caracteres");
+    }
+
+    [Fact(DisplayName = nameof(Erro_Ao_Atualizar_Nome_Com_Mais_De_100_Caracteres))]
+    [Trait("Domain", "Categoria - Aggregates")]
+    public void Erro_Ao_Atualizar_Nome_Com_Mais_De_100_Caracteres()
+    {
+        // Arrange
+        var nomeInvalido = _subCategoriaTestFixture.Faker.Lorem.Letter(101);
+        var subCategoria = _subCategoriaTestFixture.ObterSubCategoriaValida;
+
+        // Act
+        Action action =
+            () => subCategoria.Update(nomeInvalido!);
+
+        // Assert
+        action.Should().Throw<EntityValidationException>()
+          .WithMessage("Nome deve ter no máximo 100 caracteres");
+    }
+
+    [Fact(DisplayName = nameof(Erro_Ao_Atualizar_Descricao_Com_Mais_De_255_Caracteres))]
+    [Trait("Domain", "Categoria - Aggregates")]
+    public void Erro_Ao_Atualizar_Descricao_Com_Mais_De_255_Caracteres()
+    {
+        // Arrange
+        var descricaoInvalida = _subCategoriaTestFixture.Faker.Lorem.Letter(256);
+        var subCategoria = _subCategoriaTestFixture.ObterSubCategoriaValida;
+
+        // Act
+        Action action =
+            () => subCategoria.Update(_subCategoriaTestFixture.ObterNomeValidoDeSubCategoria(), 
+                                      descricaoInvalida!);
+
+        // Assert
+        action.Should().Throw<EntityValidationException>()
+         .WithMessage("Descricao deve ter no máximo 255 caracteres");
     }
 
     #endregion

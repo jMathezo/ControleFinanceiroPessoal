@@ -31,8 +31,7 @@ public class SubCategoriaTestFixture : BaseFixture
     public Dominio.SubCategoria ObterSubCategoriaValida =>
         new(
             ObterNomeValidoDeSubCategoria(),
-            ObterDescricaoValidaDeSubCategoria(),
-            Guid.NewGuid()
+            ObterDescricaoValidaDeSubCategoria()
             );
 }
 

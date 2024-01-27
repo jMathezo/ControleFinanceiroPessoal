@@ -9,15 +9,13 @@ public class SubCategoria : Entity
     public bool EstaAtivo { get; private set; }
     public DateTime CriadoEm { get; private set; }
 
-    public Guid CategoriaId { get; set; }
-    public virtual Categoria Categoria { get; private set; }
+    public virtual Categoria? Categoria { get; private set; }
 
-    public SubCategoria(string nome, string descricao, Guid categoriaId)
+    public SubCategoria(string nome, string descricao)
         : base()
     {
         Nome = nome;
         Descricao = descricao;
-        CategoriaId = categoriaId;
         EstaAtivo = true;
         CriadoEm = DateTime.Now;
 
@@ -46,7 +44,6 @@ public class SubCategoria : Entity
 
     private void Validar()
     {
-        DomainValidation.NotEmpty(CategoriaId, nameof(CategoriaId));
         DomainValidation.NotNullOrEmpty(Nome, nameof(Nome));
         DomainValidation.MinLength(Nome, 3, nameof(Nome));
         DomainValidation.MaxLength(Nome, 100, nameof(Nome));

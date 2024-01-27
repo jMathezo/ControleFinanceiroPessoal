@@ -9,9 +9,9 @@ public class Categoria : AggregateRoot
     public bool EstaAtivo { get; private set; }
     public DateTime CriadoEm { get; private set; }
     
-    private IList<SubCategoria> _subcategorias;
+    private readonly IList<SubCategoria> _subcategorias;
 
-    public IReadOnlyCollection<SubCategoria> SubCategorias => _subcategorias.ToArray();
+    public IReadOnlyCollection<SubCategoria> SubCategorias => _subcategorias.ToList().AsReadOnly();
 
     public Categoria(string nome, string descricao, bool estaAtivo = true)
         : base()
