@@ -5,6 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ControleFinanceiroPessoal.Domain.Entities;
-public class LancamentoDebito
+public class LancamentoDebito : Lancamento
 {
+    public LancamentoDebito(
+        string? descricao, 
+        double valor, 
+        Categoria? categoria, 
+        bool repetir) 
+        : base(descricao, valor, categoria, repetir)
+    {
+    }
 }

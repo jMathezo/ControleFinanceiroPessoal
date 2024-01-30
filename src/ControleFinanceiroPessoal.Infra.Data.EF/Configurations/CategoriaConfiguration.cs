@@ -15,10 +15,10 @@ internal class CategoriaConfiguration : IEntityTypeConfiguration<Categoria>
 
         // Propriedades
         builder.Property(categoria => categoria.Nome)
-            .HasMaxLength(255);
+            .HasMaxLength(100);
         
         builder.Property(categoria => categoria.Descricao)
-            .HasMaxLength(10_000);
+            .HasMaxLength(255);
 
         builder.Property(x => x.CriadoEm)
             .IsRequired()

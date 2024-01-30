@@ -23,8 +23,8 @@ public class CategoriaTestFixture : BaseFixture
     public string ObterDescricaoValidaDeCategoria()
     {
         var categoryDescription = Faker.Commerce.ProductDescription();
-        if (categoryDescription.Length > 10_000)
-            categoryDescription = categoryDescription[..10_000];
+        if (categoryDescription.Length > 255)
+            categoryDescription = categoryDescription[..255];
         return categoryDescription;
     }
 

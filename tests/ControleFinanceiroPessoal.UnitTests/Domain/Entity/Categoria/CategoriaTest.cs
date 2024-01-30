@@ -9,10 +9,10 @@ namespace ControleFinanceiroPessoal.UnitTests.Domain.Entity.Categoria;
 [Collection(nameof(CategoriaTestFixture))]
 public class CategoriaTest
 {
-    private readonly CategoriaTestFixture _categoriaTestFixture;
+    private readonly CategoriaTestFixture _fixture;
 
     public CategoriaTest(CategoriaTestFixture categoriaTestFixture) =>
-        _categoriaTestFixture = categoriaTestFixture;
+        _fixture = categoriaTestFixture;
 
     #region .: Instanciar :.
 
@@ -23,8 +23,8 @@ public class CategoriaTest
         // Arrange
         var dataValidar = new
         {
-            Nome = _categoriaTestFixture.ObterNomeValidoDeCategoria(),
-            Descricao = _categoriaTestFixture.ObterDescricaoValidaDeCategoria()
+            Nome = _fixture.ObterNomeValidoDeCategoria(),
+            Descricao = _fixture.ObterDescricaoValidaDeCategoria()
         };
 
         // Act
@@ -51,7 +51,7 @@ public class CategoriaTest
     public void Instanciar_Com_EstaAtivo(bool estaAtivo)
     {
         // Arrange
-        var dataValidar = _categoriaTestFixture.ObterCategoriaValida;
+        var dataValidar = _fixture.ObterCategoriaValida;
 
         // Act
         var dateTimeAntes = DateTime.Now;
@@ -82,7 +82,7 @@ public class CategoriaTest
         Action action =
             () => new Dominio.Categoria(
                                 nome!, 
-                                _categoriaTestFixture.ObterDescricaoValidaDeCategoria());
+                                _fixture.ObterDescricaoValidaDeCategoria());
 
         // Act
         var exception = Assert.Throws<EntityValidationException>(action);
@@ -97,7 +97,7 @@ public class CategoriaTest
     {
 
         void action() => new Dominio.Categoria(
-                                        _categoriaTestFixture.ObterNomeValidoDeCategoria(),
+                                        _fixture.ObterNomeValidoDeCategoria(),
                                         null!);
 
         // Act
@@ -118,7 +118,7 @@ public class CategoriaTest
         Action action =
             () => new Dominio.Categoria(
                                 nomeInvalido, 
-                                _categoriaTestFixture.ObterDescricaoValidaDeCategoria());
+                                _fixture.ObterDescricaoValidaDeCategoria());
 
         // Assert
         action.Should().Throw<EntityValidationException>()
@@ -130,13 +130,13 @@ public class CategoriaTest
     public void Erro_Instanciar_Nome_Mais_De_100_Caracteres()
     {
         // Arrange
-        var nomeInvalido = _categoriaTestFixture.Faker.Lorem.Letter(101);
+        var nomeInvalido = _fixture.Faker.Lorem.Letter(101);
 
         // Act
         Action action =
             () => new Dominio.Categoria(
                                 nomeInvalido, 
-                                _categoriaTestFixture.ObterDescricaoValidaDeCategoria());
+                                _fixture.ObterDescricaoValidaDeCategoria());
 
         // Assert
         action.Should().Throw<EntityValidationException>()
@@ -148,12 +148,12 @@ public class CategoriaTest
     public void Erro_Instanciar_Descricao_Mais_De_255_Caracteres()
     {
         //Arrange
-        var descricaoInvalida = _categoriaTestFixture.Faker.Lorem.Letter(256);
+        var descricaoInvalida = _fixture.Faker.Lorem.Letter(256);
 
         // Act
         Action action =
             () => new Dominio.Categoria(
-                                _categoriaTestFixture.ObterNomeValidoDeCategoria(),
+                                _fixture.ObterNomeValidoDeCategoria(),
                                 descricaoInvalida);
         
         // Assert
@@ -173,8 +173,8 @@ public class CategoriaTest
 
         // Act
         var Categoria = new Dominio.Categoria(
-                                        _categoriaTestFixture.ObterNomeValidoDeCategoria(), 
-                                        _categoriaTestFixture.ObterDescricaoValidaDeCategoria(), 
+                                        _fixture.ObterNomeValidoDeCategoria(), 
+                                        _fixture.ObterDescricaoValidaDeCategoria(), 
                                         false);
         Categoria.Ativar();
 
@@ -189,7 +189,7 @@ public class CategoriaTest
         // Arrange
 
         // Act
-        var Categoria = _categoriaTestFixture.ObterCategoriaValida;
+        var Categoria = _fixture.ObterCategoriaValida;
         Categoria.Desativar();
 
         // Assert
@@ -205,8 +205,8 @@ public class CategoriaTest
     public void Atualizar()
     {
         // Arrange
-        var categoria = _categoriaTestFixture.ObterCategoriaValida;
-        var categoriaAtualizada = _categoriaTestFixture.ObterCategoriaValida;
+        var categoria = _fixture.ObterCategoriaValida;
+        var categoriaAtualizada = _fixture.ObterCategoriaValida;
 
         // Act
         categoria.Update(categoriaAtualizada.Nome, categoriaAtualizada.Descricao);
@@ -221,8 +221,8 @@ public class CategoriaTest
     public void AtualizarNome()
     {
         // Arrange
-        var categoria = _categoriaTestFixture.ObterCategoriaValida;
-        var novoNome = _categoriaTestFixture.ObterNomeValidoDeCategoria();
+        var categoria = _fixture.ObterCategoriaValida;
+        var novoNome = _fixture.ObterNomeValidoDeCategoria();
         var descricaoAtual = categoria.Descricao;
 
         // Act
@@ -241,7 +241,7 @@ public class CategoriaTest
     public void Erro_Ao_Atualizar_Nome_Vazio_Ou_Nulo(string? nome)
     {
         // Arrange
-        var categoria = _categoriaTestFixture.ObterCategoriaValida;
+        var categoria = _fixture.ObterCategoriaValida;
 
         // Act
         Action action =
@@ -258,7 +258,7 @@ public class CategoriaTest
     public void Erro_Ao_Atualizar_Nome_Menos_De_3_Caracteres(string nomeInvalido)
     {
         // Arrange
-        var categoria = _categoriaTestFixture.ObterCategoriaValida;
+        var categoria = _fixture.ObterCategoriaValida;
 
         // Act
         Action action =
@@ -274,8 +274,8 @@ public class CategoriaTest
     public void Erro_Ao_Atualizar_Nome_Com_Mais_De_100_Caracteres()
     {
         // Arrange
-        var nomeInvalido = _categoriaTestFixture.Faker.Lorem.Letter(101);
-        var categoria = _categoriaTestFixture.ObterCategoriaValida;
+        var nomeInvalido = _fixture.Faker.Lorem.Letter(101);
+        var categoria = _fixture.ObterCategoriaValida;
 
         // Act
         Action action =
@@ -291,13 +291,13 @@ public class CategoriaTest
     public void Erro_Ao_Atualizar_Descricao_Com_Mais_De_255_Caracteres()
     {
         // Arrange
-        var invalidDescription = _categoriaTestFixture.Faker.Lorem.Letter(256); 
-        var categoria = _categoriaTestFixture.ObterCategoriaValida;
+        var invalidDescription = _fixture.Faker.Lorem.Letter(256); 
+        var categoria = _fixture.ObterCategoriaValida;
 
         // Act
         Action action =
             () => categoria.Update(
-                        _categoriaTestFixture.ObterNomeValidoDeCategoria(), 
+                        _fixture.ObterNomeValidoDeCategoria(), 
                         invalidDescription!);
 
         // Assert
@@ -313,7 +313,7 @@ public class CategoriaTest
     public void Adicionar_SubCategoria()
     {
         // Arrange
-        var categoria = _categoriaTestFixture.ObterCategoriaValida;
+        var categoria = _fixture.ObterCategoriaValida;
         var subCategoria = new Dominio.SubCategoria(
             "Nome subcategoria", 
             "Descrição subcategoria");

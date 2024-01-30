@@ -2,10 +2,8 @@
 
 namespace ControleFinanceiroPessoal.Domain.Validation;
 
-public class DomainValidation
+public static class DomainValidation
 {
-    protected DomainValidation() { }
-
     public static void NotNull(object? target, string fieldName)
     {
         if (target is null)

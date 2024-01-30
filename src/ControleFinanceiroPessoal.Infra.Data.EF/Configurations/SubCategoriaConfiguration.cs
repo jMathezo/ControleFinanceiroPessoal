@@ -15,10 +15,10 @@ public class SubCategoriaConfiguration : IEntityTypeConfiguration<SubCategoria>
 
         // Propriedades
         builder.Property(subCategoria => subCategoria.Nome)
-            .HasMaxLength(255);
+            .HasMaxLength(100);
 
         builder.Property(subCategoria => subCategoria.Descricao)
-            .HasMaxLength(10_000);
+            .HasMaxLength(255);
 
         builder.Property(x => x.CriadoEm)
             .IsRequired()
@@ -34,7 +34,7 @@ public class SubCategoriaConfiguration : IEntityTypeConfiguration<SubCategoria>
 
         builder.HasOne(x => x.Categoria)
                .WithMany(x => x.SubCategorias)
-               .HasConstraintName("FK_Categoria_SubCategory")
+               .HasConstraintName("FK_Categoria_SubCategoria")
                .OnDelete(DeleteBehavior.Cascade);
     }
 }
